@@ -11,10 +11,10 @@ jobs:
     - name: Clone source code
       run: |
         curl -L -O https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tar.xz
-        tar xf Python-3.9.16.tar.xz
+        tar xf ./Python-3.9.16.tar.xz
     - name: Build
       run: |
-        cd Python-3.9.16
+        cd ./Python-3.9.16
         configure --enable-optimizations
         make -j$(nproc)
     - name : Upload artifact
