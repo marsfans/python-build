@@ -14,10 +14,11 @@ jobs:
     - name: Build
       run: |
         cd ./cpython
-        ./configure --enable-optimizations
+        ./configure --enable-optimizations --prefix=/home/runner/work/python-build/python
         make -j$(nproc)
+        make install
     - name : Upload artifact
       uses: actions/upload-artifact@master
       with:
         name: OpenWrt
-        path: openwrt/bin
+        path: '/home/runner/work/python-build/python
