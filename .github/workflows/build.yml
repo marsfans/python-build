@@ -1,8 +1,8 @@
 name: Build python
 on: push
 jobs:
-  build:
-    runs-on: ubuntu-20.04
+  build_linux:
+    runs-on: ubuntu-latset
     steps:
     - name: Installation depends
       run: |
@@ -20,5 +20,28 @@ jobs:
     - name : Upload artifact
       uses: actions/upload-artifact@master
       with:
-        name: python-build-3.9.16
+        name: python-build-linux-3.9.16
         path: /home/runner/work/python-build/python
+  build_win_amd64:
+    name: 'Windows (x64)'
+    runs-on: windows-latest
+    #needs: check_source
+    #if: needs.check_source.outputs.run_tests == 'true'
+    env:
+       IncludeUwp: 'true'
+    steps:
+    - uses: actions/checkout@v3
+    - name: Register MSVC problem matcher
+      run: echo "::add-matcher::.github/problem-matchers/msvc.json"
+    - name: Build CPython
+      run: |
+        pip install -U mercurial
+        git clone -b v3.9.16 https://github.com/python/cpython
+        cd python
+        mkdir .\build
+        .\Tools\msi\buildrelease.bat -x64 -D -B --skip-nuget -o D:\a\cpython\cpython\build
+     - name : Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: python-build-win-amd64-3.12a5   
+        path: D:\a\cpython\cpython\PCbuild\amd64\en-us
