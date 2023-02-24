@@ -20,5 +20,5 @@ jobs:
     - name : Upload artifact
       uses: actions/upload-artifact@master
       with:
-        name: OpenWrt
-        path: '/home/runner/work/python-build/python
+        name: python-build-3.9.16
+        path: /home/runner/work/python-build/python
