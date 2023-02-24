@@ -13,7 +13,7 @@ jobs:
         git clone -b v3.9.16 https://github.com/python/cpython
     - name: Build
       run: |
-        cd ./Cpython
+        cd ./cpython
         ./configure --enable-optimizations
         make -j$(nproc)
     - name : Upload artifact
