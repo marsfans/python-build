@@ -1,9 +1,11 @@
 name: Build python
 on: push
 jobs:
-   macos-latest
-    needs: check_source
-    if: needs.check_source.outputs.run_tests == 'true'
+   build_macos:
+    name: 'macOS'
+    runs-on: macos-latest
+    #needs: check_source
+    #if: needs.check_source.outputs.run_tests == 'true'
     env:
       HOMEBREW_NO_ANALYTICS: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
@@ -32,7 +34,7 @@ jobs:
       run: make pythoninfo
     - name: Install CPython
       run: make install
-    - name : Upload artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@master
       with:
         name: python-build-macos-3.9.16
