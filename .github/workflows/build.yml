@@ -1,60 +1,8 @@
 name: Build python
 on:
-  workflow_dispatch:
   push:
 
-permissions:
-  contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
-  build_macos:
-    name: 'macOS'
-    runs-on: macos-latest
-    #needs: check_source
-    #if: needs.check_source.outputs.run_tests == 'true'
-    env:
-      HOMEBREW_NO_ANALYTICS: 1
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      HOMEBREW_NO_INSTALL_CLEANUP: 1
-      PYTHONSTRICTEXTENSIONBUILD: 1
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install Homebrew dependencies
-      run: brew install pkg-config openssl@1.1 xz gdbm tcl-tk
-    - name: Clone source code
-      run: |
-        git clone -b v3.9.16 https://github.com/python/cpython
-    - name: Configure CPython
-      run: |
-        cd ./cpython 
-        CFLAGS="-I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include" \
-        LDFLAGS="-L$(brew --prefix gdbm)/lib -I$(brew --prefix xz)/lib" \
-        PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig" \
-        ./configure \
-          --with-pydebug \
-          --prefix=/opt/python-dev \
-          --with-openssl="$(brew --prefix openssl@1.1)"
-    - name: Build CPython
-      run: |
-        cd ./cpython
-        make -j4
-    - name: Display build info
-      run: |
-        cd ./cpython
-        make pythoninfo
-    - name: Install CPython
-      run: |
-        cd ./cpython
-        make install
-    - name: Upload artifact
-      uses: actions/upload-artifact@master
-      with:
-        name: python-build-macos-3.9.16
-        path: /opt/python-dev
   build_ubuntu:
     name: 'Ubuntu'
     runs-on: ubuntu-latset
