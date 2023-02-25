@@ -1,6 +1,42 @@
 name: Build python
 on: push
 jobs:
+   macos-latest
+    needs: check_source
+    if: needs.check_source.outputs.run_tests == 'true'
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      PYTHONSTRICTEXTENSIONBUILD: 1
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Homebrew dependencies
+      run: brew install pkg-config openssl@1.1 xz gdbm tcl-tk
+    - name: Clone source code
+      run: |
+        git clone -b v3.9.16 https://github.com/python/cpython
+   - name: Configure CPython
+      run: |
+        cd ./cpython
+        CFLAGS="-I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include" \
+        LDFLAGS="-L$(brew --prefix gdbm)/lib -I$(brew --prefix xz)/lib" \
+        PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig" \
+        ./configure \
+          --with-pydebug \
+          --prefix=/opt/python-dev \
+          --with-openssl="$(brew --prefix openssl@1.1)"
+    - name: Build CPython
+      run: make -j4
+    - name: Display build info
+      run: make pythoninfo
+    - name: Install CPython
+      run: make install
+    - name : Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: python-build-macos-3.9.16
+        path: /opt/python-dev
   build_linux:
     runs-on: ubuntu-latset
     steps:
@@ -20,28 +56,6 @@ jobs:
     - name : Upload artifact
       uses: actions/upload-artifact@master
       with:
-        name: python-build-linux-3.9.16
+        name: python-build-linux-amd64-3.9.16
         path: /home/runner/work/python-build/python
-  build_win_amd64:
-    name: 'Windows (x64)'
-    runs-on: windows-latest
-    #needs: check_source
-    #if: needs.check_source.outputs.run_tests == 'true'
-    env:
-       IncludeUwp: 'true'
-    steps:
-    - uses: actions/checkout@v3
-    - name: Register MSVC problem matcher
-      run: echo "::add-matcher::.github/problem-matchers/msvc.json"
-    - name: Build CPython
-      run: |
-        pip install -U mercurial
-        git clone -b v3.9.16 https://github.com/python/cpython
-        cd python
-        mkdir .\build
-        .\Tools\msi\buildrelease.bat -x64 -D -B --skip-nuget -o D:\a\cpython\cpython\build
-     - name : Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: python-build-win-amd64-3.12a5   
-        path: D:\a\cpython\cpython\PCbuild\amd64\en-us
+  
