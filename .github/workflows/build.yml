@@ -28,7 +28,7 @@ jobs:
         PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig" \
         ./configure \
           --with-pydebug \
-          --prefix=/home/runner/work/python-build/python \
+          --prefix=/User/runner/work/python-build/python \
           --with-openssl="$(brew --prefix openssl@1.1)"
     - name: Build CPython
       run: |
@@ -46,7 +46,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: python-build-macos-3.9.16
-        path: /home/runner/work/python-build/python
+        path: /User/runner/work/python-build/python
   build_ubuntu:
     name: 'Ubuntu'
     runs-on: ubuntu-20.04
