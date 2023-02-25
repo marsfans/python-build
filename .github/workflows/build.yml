@@ -1,11 +1,11 @@
 name: Build python
 on: push
 jobs:
-   build_macos:
+  build_macos:
     name: 'macOS'
     runs-on: macos-latest
-    #needs: check_source
-    #if: needs.check_source.outputs.run_tests == 'true'
+    needs: check_source
+    if: needs.check_source.outputs.run_tests == 'true'
     env:
       HOMEBREW_NO_ANALYTICS: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
@@ -15,12 +15,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Homebrew dependencies
       run: brew install pkg-config openssl@1.1 xz gdbm tcl-tk
-    - name: Clone source code
+    - name: Configure CPython
       run: |
-        git clone -b v3.9.16 https://github.com/python/cpython
-   - name: Configure CPython
-      run: |
-        cd ./cpython
         CFLAGS="-I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include" \
         LDFLAGS="-L$(brew --prefix gdbm)/lib -I$(brew --prefix xz)/lib" \
         PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig" \
