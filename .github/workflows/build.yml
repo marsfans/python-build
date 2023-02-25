@@ -45,7 +45,8 @@ jobs:
       with:
         name: python-build-macos-3.9.16
         path: /opt/python-dev
-  build_linux:
+  build_ubuntu:
+    name: 'Ubuntu'
     runs-on: ubuntu-latset
     steps:
     - name: Installation depends
