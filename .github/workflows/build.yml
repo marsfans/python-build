@@ -5,7 +5,7 @@ on:
 jobs:
   build_ubuntu:
     name: 'Ubuntu'
-    runs-on: ubuntu-latset
+    runs-on: ubuntu-20.04
     steps:
     - name: Installation depends
       run: |
