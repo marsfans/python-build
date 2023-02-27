@@ -1,0 +1,72 @@
+name: Build python
+on:
+  push:
+
+jobs:
+  build_macos:
+    name: 'macOS'
+    runs-on: macos-latest
+    #needs: check_source
+    #if: needs.check_source.outputs.run_tests == 'true'
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      PYTHONSTRICTEXTENSIONBUILD: 1
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Homebrew dependencies
+      run: brew install pkg-config openssl@1.1 xz gdbm tcl-tk
+    - name: Clone source code
+      run: |
+        git clone -b v3.12.0a5 https://github.com/python/cpython
+    - name: Configure CPython
+      run: |
+        cd ./cpython 
+        CFLAGS="-I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include" \
+        LDFLAGS="-L$(brew --prefix gdbm)/lib -I$(brew --prefix xz)/lib" \
+        PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig" \
+        ./configure \
+          --with-pydebug \
+          --prefix=/Users/runner/work/python-build/python \
+          --with-openssl="$(brew --prefix openssl@1.1)"
+    - name: Build CPython
+      run: |
+        cd ./cpython
+        make -j4
+    - name: Display build info
+      run: |
+        cd ./cpython
+        make pythoninfo
+    - name: Install CPython
+      run: |
+        cd ./cpython
+        make install
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: python-build-macos-3.12.0a5
+        path: /Users/runner/work/python-build/python
+  build_ubuntu:
+    name: 'Ubuntu'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Installation depends
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install build-essential git libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libgdbm-compat-dev gcc-11
+    - name: Clone source code
+      run: |
+        git clone -b v3.12.0a5 https://github.com/python/cpython
+    - name: Build
+      run: |
+        cd ./cpython
+        ./configure --enable-optimizations --prefix=/home/runner/work/python-build/python
+        make -j$(nproc)
+        make install
+    - name : Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: python-build-linux-amd64-3.12.0a5
+        path: /home/runner/work/python-build/python
+  
