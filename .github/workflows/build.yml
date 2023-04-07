@@ -77,7 +77,9 @@ jobs:
       run: git clone -b v3.9.16 https://github.com/python/cpython  
     - uses: actions/checkout@v3
     - name: Register MSVC problem matcher
-      run: echo "::add-matcher::.github/problem-matchers/msvc.json"
+      run: |
+        cd ./cpython
+        echo "::add-matcher::.github/problem-matchers/msvc.json"
     - name: Build CPython
       run: | 
         cd .\cpython
