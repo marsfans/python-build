@@ -69,4 +69,24 @@ jobs:
       with:
         name: python-build-linux-amd64-3.9.16
         path: /home/runner/work/python-build/python
-  
+  build_win_amd64:
+    name: 'Windows (x64)'
+    runs-on: windows-latest
+    steps:
+    - name: git clone -b v3.9.16 https://github.com/python/cpython  
+    - uses: actions/checkout@v3
+    - name: Register MSVC problem matcher
+      run: echo "::add-matcher::.github/problem-matchers/msvc.json"
+    - name: Build CPython
+      run: | 
+        cd .\cpython
+        .\PCbuild\build.bat -e -d -p x64
+      timeout-minutes: 30
+    - name: Display build info
+      run: |
+        cd .\cpython
+        .\python.bat -m test.pythoninfo
+    - name: Tests
+      run: |
+        cd .\cpython
+        .\PCbuild\rt.bat -p x64 -d -q -uall -u-cpu -rwW --slowest --timeout=1200 -j0
