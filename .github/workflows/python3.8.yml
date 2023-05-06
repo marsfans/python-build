@@ -73,13 +73,14 @@ jobs:
     name: 'Windows (x64)'
     runs-on: windows-latest
     steps:
-    - name: git clone
-      run: git clone -b v3.8.16 https://github.com/python/cpython  
-    - uses: actions/checkout@v3
-    # - name: Register MSVC problem matcher
+     # - name: Register MSVC problem matcher
     #   run: |
     #     cd ./cpython
     #     echo "::add-matcher::.github/problem-matchers/msvc.json"
+    - name: git clone
+      run: git clone -b v3.8.16 https://github.com/python/cpython  
+    - uses: actions/checkout@v3
+   
     - name: Build CPython
       run: | 
         cd .\cpython
