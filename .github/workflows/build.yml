@@ -82,13 +82,14 @@ jobs:
     #     echo "::add-matcher::.github/problem-matchers/msvc.json"
     - name: Build CPython
       run: | 
-        cd .\cpython
-        .\Tools\msi\buildrelease.bat -x64
+        ls
+        cd ./cpython
+        ./Tools/msi/buildrelease.bat -x64
       timeout-minutes: 30
     - name: Display build info
       run: |
-        cd .\cpython
-        .\python.bat -m test.pythoninfo
+        cd ./cpython
+        ./python.bat -m test.pythoninfo
     - name: Tests
       run: |
         cd .\cpython
