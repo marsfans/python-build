@@ -83,7 +83,7 @@ jobs:
     - name: Build CPython
       run: | 
         cd .\cpython
-        .\PCbuild\build.bat -e -d -p x64
+        .\Tools\msi\buildrelease.bat -x64
       timeout-minutes: 30
     - name: Display build info
       run: |
