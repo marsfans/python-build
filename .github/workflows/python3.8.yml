@@ -78,6 +78,10 @@ jobs:
     #   run: |
     #     cd ./cpython
     #     echo "::add-matcher::.github/problem-matchers/msvc.json"
+    - name: set path
+      run: |
+        set path=%path%;C:\hostedtoolcache\windows\Python\3.7.9\x64\Scripts
+        path
     - name: git clone
       run: git clone -b v3.8.16 https://github.com/python/cpython  
     - name: Build CPython
