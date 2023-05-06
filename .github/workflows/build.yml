@@ -1,4 +1,4 @@
-name: Build python
+name: Build python 3.9
 on:
   push:
 
@@ -76,10 +76,10 @@ jobs:
     - name: git clone
       run: git clone -b v3.9.16 https://github.com/python/cpython  
     - uses: actions/checkout@v3
-    - name: Register MSVC problem matcher
-      run: |
-        cd ./cpython
-        echo "::add-matcher::.github/problem-matchers/msvc.json"
+    # - name: Register MSVC problem matcher
+    #   run: |
+    #     cd ./cpython
+    #     echo "::add-matcher::.github/problem-matchers/msvc.json"
     - name: Build CPython
       run: | 
         cd .\cpython
@@ -93,3 +93,14 @@ jobs:
       run: |
         cd .\cpython
         .\PCbuild\rt.bat -p x64 -d -q -uall -u-cpu -rwW --slowest --timeout=1200 -j0
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        # Artifact name
+        name: python-x64-windows-3.9.16
+        # A file, directory or wildcard pattern that describes what to upload
+        path: |
+          ./PCbuild/amd64/en-us/*.zip
+          ./PCbuild/amd64/en-us/*.exe
+          ./PCbuild/amd64/en-us/*.nupkg
+
